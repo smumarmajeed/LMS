@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Library Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --danger: #f94144;
+            --transition: all 0.3s ease;
+            --border-radius: 10px;
+        }
+
+        body {
+            background-image: url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            
+        }
+        .text-shadow-bg {
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            display: inline-block;
+            margin-left: 23%;
+            margin-top: 13%;
+        }
+        /* Background Overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.2);
+            z-index: -1;
+        }
+        /* Reset styles for list */
+        .navbar {
+            background-color: #4361ee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .navbar-title {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .navbar-title i {
+            font-size: 1.4rem;
+        }
+        
+        /* Navbar Links */
+        .navbar-links {
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .navbar-links li {
+            position: relative;
+        }
+        
+        .navbar-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 1rem;
+            transition: color 0.2s ease;
+        }
+        
+        .navbar-links a:hover {
+            color: #dce2f0;
+        }
+        
+        /* Dropdown */
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            display: none;
+            flex-direction: column;
+            min-width: 160px;
+            padding: 0.5rem 0;
+            z-index: 100;
+        }
+        
+        .dropdown:hover .dropdown-menu,
+        .dropdown-menu:hover {
+            display: flex;
+        }
+        
+        .dropdown-menu li {
+            padding: 0.6rem 1rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .dropdown-menu li:last-child {
+            border-bottom: none;
+        }
+        
+        .dropdown-menu a {
+            color: #212529;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.2s ease;
+        }
+        
+        .dropdown-menu a:hover {
+            background-color: #f6f6f6;
+            border-radius: 4px;
+        }
+        
+        /* Disabled style */
+        .dropdown-menu .disabled {
+            color: #aaa;
+            pointer-events: none;
+            padding: 0.6rem 1rem;
+        }
+        
+        /* Content Styling */
+        .content {
+            padding: 2rem;
+            max-width: 960px;
+            margin: auto;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .navbar-links {
+                flex-direction: column;
+                width: 100%;
+                gap: 0.5rem;
+                margin-top: 0.5rem;
+            }
+
+            .dropdown-menu {
+                position: relative;
+                top: 0;
+                box-shadow: none;
+                transform: none;
+                opacity: 1;
+                visibility: visible;
+                display: none;
+            }
+
+            .dropdown:hover .dropdown-menu {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <nav class="navbar">
+        <div class="navbar-title"><i class="fas fa-book-reader"></i> Library System</div>
+        <ul class="navbar-links">
+            <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+            <li class="dropdown">
+                <a href="#"><i class="fas fa-book"></i> Book </a>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ url_for('view_books') }}">View</a></li>
+                    {% if session.get('librarian_logged_in') %}
+                        <li><a href="{{ url_for('add_book') }}">Add</a></li>
+                        <li><a href="{{ url_for('delete_book') }}">Delete</a></li>
+                        <li><a href="{{ url_for('update_book') }}">Update</a></li>
+                    {% else %}
+                        <li class="disabled">Add</li>
+                        <li class="disabled">Delete</li>
+                        <li class="disabled">Update</li>
+                    {% endif %}
+                </ul>
+            </li>
+            <li><a href="{{ url_for('cart_issue_books') }}"><i class="fas fa-hand-holding"></i> Issue</a></li>
+            <li><a href="{{ url_for('view_records') }}"><i class="fas fa-file-alt"></i> View Records</a></li>
+
+        
+            {% if session.get('librarian_logged_in') %}
+                <li><a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout (Librarian)</a></li>
+            {% elif session.get('user_logged_in') %}
+                <li><a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout (User)</a></li>
+            {% else %}
+                <li><a href="{{ url_for('login') }}"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                <li><a href="{{ url_for('signup') }}"><i class="fas fa-user-plus"></i> Signup</a></li>
+            {% endif %}
+        </ul>
+        
+    </nav>
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,342 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="issue-container">
+    <div class="issue-card">
+        <div class="issue-header">
+            <h2><i class="fas fa-book-open"></i> Confirm & Issue Books</h2>
+            <div class="divider"></div>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert-message alert-{{ category }}">
+                        <i class="fas fa-{% if category == 'success' %}check-circle{% else %}exclamation-circle{% endif %}"></i>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% if issued_books %}
+        <form method="POST" action="{{ url_for('cart_issue_books') }}" class="issue-form">
+          
+            <div class="books-list-container">
+                <h3 class="section-title">
+                    <i class="fas fa-list-ul"></i> Books to be Issued
+                </h3>
+                <div class="books-list">
+                    {% for book in issued_books %}
+                    <div class="book-item">
+                        <div class="book-info">
+                            <h4 class="book-title">{{ book.title }}</h4>
+                            <p class="book-author">by {{ book.author }}</p>
+                        </div>
+                        <span class="book-id">ID: {{ book.id }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button type="submit" class="btn confirm-btn">
+                    <i class="fas fa-check-circle"></i> Confirm Issue
+                </button>
+                <a href="{{ url_for('view_books') }}" class="btn cancel-btn">
+                    <i class="fas fa-times-circle"></i> Cancel
+                </a>
+            </div>
+        </form>
+        {% else %}
+        <div class="empty-cart">
+            <i class="fas fa-book"></i>
+            <h3>No books in cart to issue</h3>
+            <a href="{{ url_for('view_books') }}" class="browse-link">
+                <i class="fas fa-arrow-right"></i> Browse available books
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+/* Base Styles */
+:root {
+    --primary-color: #4361ee;
+    --secondary-color: #3f37c9;
+    --success-color: #4cc9f0;
+    --warning-color: #f8961e;
+    --danger-color: #f94144;
+    --light-color: #f8f9fa;
+    --dark-color: #212529;
+    --border-radius: 12px;
+    --box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    --transition: all 0.3s ease;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f7fa;
+    color: var(--dark-color);
+    line-height: 1.6;
+}
+
+/* Container Styles */
+.issue-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.issue-card {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    overflow: hidden;
+    padding: 2rem;
+    transition: var(--transition);
+}
+
+.issue-card:hover {
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+}
+
+/* Header Styles */
+.issue-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.issue-header h2 {
+    color: var(--primary-color);
+    font-weight: 700;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.divider {
+    height: 3px;
+    background: linear-gradient(to right, var(--primary-color), var(--success-color));
+    width: 100px;
+    margin: 0 auto;
+    border-radius: 3px;
+}
+
+/* Form Styles */
+.issue-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--dark-color);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-input {
+    padding: 0.8rem 1rem;
+    border: 2px solid #e9ecef;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    transition: var(--transition);
+}
+
+.form-input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+}
+
+/* Books List Styles */
+.books-list-container {
+    margin-top: 1rem;
+}
+
+.section-title {
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.books-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.book-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+}
+
+.book-item:hover {
+    background-color: #e9ecef;
+    transform: translateY(-2px);
+}
+
+.book-info {
+    flex: 1;
+}
+
+.book-title {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: var(--dark-color);
+}
+
+.book-author {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.book-id {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* Button Styles */
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.btn {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+}
+
+.confirm-btn {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.confirm-btn:hover {
+    background-color: var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+.cancel-btn {
+    background-color: white;
+    color: var(--dark-color);
+    border: 2px solid #e9ecef;
+}
+
+.cancel-btn:hover {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+}
+
+/* Empty Cart Styles */
+.empty-cart {
+    text-align: center;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.empty-cart i {
+    font-size: 3rem;
+    color: var(--warning-color);
+}
+
+.empty-cart h3 {
+    color: var(--dark-color);
+    font-weight: 600;
+}
+
+.browse-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: var(--transition);
+}
+
+.browse-link:hover {
+    color: var(--secondary-color);
+    transform: translateX(5px);
+}
+
+/* Alert Styles */
+.alert-message {
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.alert-success {
+    background-color: rgba(76, 201, 240, 0.1);
+    border-left: 4px solid var(--success-color);
+    color: #0a9396;
+}
+
+.alert-error {
+    background-color: rgba(249, 65, 68, 0.1);
+    border-left: 4px solid var(--danger-color);
+    color: #ae2012;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .issue-card {
+        padding: 1.5rem;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+</style>
+
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+{% endblock %}

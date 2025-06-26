@@ -1,0 +1,94 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="add-book-page">
+    <!-- Background Photo -->
+    <div class="background-photo"></div>
+
+    <div class="form-container">
+        <div class="form-header">
+            <h2><i class="fas fa-user-plus"></i> Library Signup</h2>
+            <p>Create your account to start borrowing books</p>
+        </div>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        <form method="POST" action="/signup" class="book-form">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <div class="input-with-icon">
+                    <i class="fas fa-user"></i>
+                    <input type="text" name="username" id="username" required minlength="3" placeholder="Enter username">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-with-icon">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" name="password" id="password" required minlength="6" placeholder="Enter password">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <div class="input-with-icon">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" name="email" id="email" required placeholder="Enter email">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <div class="input-with-icon">
+                    <i class="fas fa-phone"></i>
+                    <input type="text" name="phone" id="phone" required pattern="\d{10}" placeholder="Enter 10-digit phone number">
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-user-plus"></i> Sign Up
+                </button>
+                <a href="/" class="cancel-btn">
+                    <i class="fas fa-arrow-left"></i> Back
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* Reuse same variables and styles as login with signup-specific tweaks */
+
+.form-header h2 {
+    color: var(--primary-color);
+    font-size: 2rem;
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.form-header p {
+    color: var(--gray-color);
+    font-size: 1rem;
+    margin-top: 0.3rem;
+}
+
+/* Override submit button color for signup */
+.submit-btn {
+    background: var(--success-color);
+}
+
+.submit-btn:hover {
+    background: #3ac75f;
+}
+</style>
+{% endblock %}
